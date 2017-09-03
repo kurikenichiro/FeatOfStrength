@@ -22,11 +22,11 @@ while True:
         # Display Time based on button states
         buttons = module.get_buttons()
         if buttons & 0x01:
-            timeFormat = '%m%d%H%M'
+            time_format = '%m%d%H%M'
         else:
-            timeFormat = '%m%d%I%M'
+            time_format = '%m%d%I%M'
 
         if buttons & 0x02:
-            module.set_time(utc_dt, timeFormat)
+            module.set_time(utc_dt, time_format)
         else:
-            module.set_time(dt, timeFormat)
+            module.set_time(dt, time_format)

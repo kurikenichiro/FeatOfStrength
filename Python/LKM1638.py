@@ -17,29 +17,29 @@ class LKM1638(object):
         print "Opened Serial Port: ", self.ser.name
 
     def set_led(self, color, position):
-        commandString = 'l'
+        command_string = 'l'
         if color.lower() == 'green':
-            commandString += 'g '
+            command_string += 'g '
         elif color.lower() == 'red':
-            commandString += 'r '
+            command_string += 'r '
         else:
-            commandString += 'n '
+            command_string += 'n '
 
-        commandString += str(position)
-        commandString += '\n'
-        print "Serial Write: ", commandString
-        self.ser.write(commandString)
+        command_string += str(position)
+        command_string += '\n'
+        print "Serial Write: ", command_string
+        self.ser.write(command_string)
 
     def get_buttons(self):
         self.ser.write('b\n')
-        readString = self.ser.readline()
-        if is_number(readString):
-            return int(readString)
+        read_string = self.ser.readline()
+        if is_number(read_string):
+            return int(read_string)
         else:
             return 0
 
-    def set_time(self, dt, timeFormat):
-        commandString = 'd '
-        commandString += dt.strftime(timeFormat)
-        commandString += '\n'
-        self.ser.write(commandString)
+    def set_time(self, dt, time_format):
+        command_string = 'd '
+        command_string += dt.strftime(time_format)
+        command_string += '\n'
+        self.ser.write(command_string)

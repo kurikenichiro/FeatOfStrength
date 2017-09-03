@@ -16,6 +16,7 @@ STB0 -> 7 (orange)
 # Dependancies
 
 * https://github.com/rjbatista/tm1638-library
+* PySerial
 
 # Building
 

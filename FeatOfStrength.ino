@@ -62,7 +62,7 @@ void serialCommandHandler()
 
         if (secondChar == 'a')
         {
-          word ledWord = stringToInt(inString.substring(2));
+          word ledWord = inString.substring(2).toInt();
           module.setLEDs(ledWord);
         }
         else
@@ -78,7 +78,7 @@ void serialCommandHandler()
             ledColor = TM1638_COLOR_GREEN;
           }
 
-          byte ledPosition = stringToInt(inString.substring(2));
+          byte ledPosition = inString.substring(2).toInt();
 
           if (ledPosition < 8)
           {
@@ -95,15 +95,40 @@ void serialCommandHandler()
         byte buttons = module.getButtons();
         Serial.println(buttons, DEC);
       }
+      else if (firstChar == 'h')
+      {
+        String hexString = inString.substring(2).trim();
+        int spaceIndex = hexString.indexOf(' ');
+
+        unsigned long number = hexString.toInt();
+        byte dots = 0;
+
+        if (spaceIndex != -1)
+        {
+          dots = hexString.substring(spaceIndex).toInt();
+        }
+
+        module.setDisplayToHexNumber(number, dots);
+      }
+      else if (firstChar == 'd')
+      {
+        String decString = inString.substring(2).trim();
+        int spaceIndex = decString.indexOf(' ');
+
+        long number = decString.toInt();
+        byte dots = 0;
+
+        if (spaceIndex != -1)
+        {
+          dots = decString.substring(spaceIndex).toInt();
+        }
+
+        module.setDisplayToSignedDecNumber(number, dots);
+      }
+
 
       // clear the string for new input:
       inString = "";
     }
   }
-}
-
-int stringToInt(String parseString)
-{
-  parseString.trim();
-  return parseString.toInt();
 }

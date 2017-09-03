@@ -2,6 +2,20 @@
 
 * Install Arduino IDE https://www.arduino.cc/en/Main/Software
 * Install Teensyduino
+* Clone tm1638-library into Arduino library location
+
+Connect the following
+VCC -> 5V (red)
+GND -> GND (black)
+DIO -> 8 (yellow)
+CLK -> 9 (green)
+STB0 -> 7 (orange)
+
+* Add readline to line ending in serial monitor to test.
+
+# Dependancies
+
+* https://github.com/rjbatista/tm1638-library
 
 # Building
 

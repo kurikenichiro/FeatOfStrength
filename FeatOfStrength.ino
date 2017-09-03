@@ -1,29 +1,134 @@
-/* LED Blink, Teensyduino Tutorial #1
-   http://www.pjrc.com/teensy/tutorial.html
+/*
+Library examples for TM1638.
 
-   This example code is in the public domain.
+Copyright (C) 2011 Ricardo Batista <rjbatista at gmail dot com>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the version 3 GNU General Public License as
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// Teensy 2.0 has the LED on pin 11
-// Teensy++ 2.0 has the LED on pin 6
-// Teensy 3.x / Teensy LC have the LED on pin 13
-const int ledPin = 13;
+#include <TM1638.h>
 
-// the setup() method runs once, when the sketch starts
+const byte dioPin = 8;
+const byte clkPin = 9;
+const byte stb0Pin = 7;
+const bool isDisplayActive = true;
+const byte intensity = 1;
+
+TM1638 module(dioPin, clkPin, stb0Pin, isDisplayActive, intensity);
 
 void setup()
 {
-  // initialize the digital pin as an output.
-  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+
+  // display a hexadecimal number and set the left 4 dots
+  module.setDisplayToHexNumber(0x1234ABCD, 0xF0);
 }
 
-// the loop() methor runs over and over again,
-// as long as the board has power
 void loop()
 {
-  digitalWrite(ledPin, HIGH);   // set the LED on
-  delay(500);                  // wait for a second
-  digitalWrite(ledPin, LOW);    // set the LED off
-  delay(500);                  // wait for a second
+  serialCommandHandler();
 }
 
+void serialCommandHandler()
+{
+  static String inString = "";
+
+  while (Serial.available() > 0)
+  {
+    char inChar = Serial.read();
+
+    if (inChar != '\n')
+    {
+      inString += inChar;
+    }
+    else
+    {
+      char firstChar = inString.charAt(0);
+
+      // Handle LED Command
+      if (firstChar == 'l')
+      {
+        char secondChar = inString.charAt(1);
+
+        if (secondChar == 'a')
+        {
+          word ledWord = inString.substring(2).toInt();
+          module.setLEDs(ledWord);
+        }
+        else
+        {
+          byte ledColor = TM1638_COLOR_NONE;
+
+          if (secondChar == 'r')
+          {
+            ledColor = TM1638_COLOR_RED;
+          }
+          else if (secondChar == 'g')
+          {
+            ledColor = TM1638_COLOR_GREEN;
+          }
+
+          byte ledPosition = inString.substring(2).toInt();
+
+          if (ledPosition < 8)
+          {
+            module.setLED(ledColor, ledPosition);
+          }
+          else
+          {
+            Serial.println("led position must be 0~7");
+          }
+        }
+      }
+      else if (firstChar == 'b')
+      {
+        byte buttons = module.getButtons();
+        Serial.println(buttons, DEC);
+      }
+      else if (firstChar == 'h')
+      {
+        String hexString = inString.substring(2).trim();
+        int spaceIndex = hexString.indexOf(' ');
+
+        unsigned long number = hexString.toInt();
+        byte dots = 0;
+
+        if (spaceIndex != -1)
+        {
+          dots = hexString.substring(spaceIndex).toInt();
+        }
+
+        module.setDisplayToHexNumber(number, dots);
+      }
+      else if (firstChar == 'd')
+      {
+        String decString = inString.substring(2).trim();
+        int spaceIndex = decString.indexOf(' ');
+
+        long number = decString.toInt();
+        byte dots = 0;
+
+        if (spaceIndex != -1)
+        {
+          dots = decString.substring(spaceIndex).toInt();
+        }
+
+        module.setDisplayToSignedDecNumber(number, dots);
+      }
+
+
+      // clear the string for new input:
+      inString = "";
+    }
+  }
+}

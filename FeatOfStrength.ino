@@ -26,7 +26,7 @@ const byte intensity = 1;
 
 TM1638 module(dioPin, clkPin, stb0Pin, isDisplayActive, intensity);
 
-void setup() 
+void setup()
 {
   Serial.begin(9600);
 
@@ -34,15 +34,69 @@ void setup()
   module.setDisplayToHexNumber(0x1234ABCD, 0xF0);
 }
 
-void loop() 
+void loop()
 {
-  // light the first 4 red LEDs and the last 4 green LEDs as the buttons are pressed
-  byte keys = module.getButtons();
-  module.setLEDs(((keys & 0xF0) << 8) | (keys & 0xF));
+  serialCommandHandler();
+  // button press detectino likes the delay...
+  delay(500);
+}
 
-  // Print keys
-  Serial.print("keys: ");
-  Serial.println(keys, HEX);
+void serialCommandHandler()
+{
+  static String inString = "";
 
-  delay(1000);
+  while (Serial.available() > 0)
+  {
+    char inChar = Serial.read();
+
+    if (inChar != '\n')
+    {
+      inString += inChar;
+    }
+    else
+    {
+      char firstChar = inString.charAt(0);
+
+      // Handle LED Command
+      if (firstChar == 'l')
+      {
+        byte ledColor = TM1638_COLOR_NONE;
+        char secondChar = inString.charAt(1);
+
+        if (secondChar == 'r')
+        {
+          ledColor = TM1638_COLOR_RED;
+        }
+        else if (secondChar == 'g')
+        {
+          ledColor = TM1638_COLOR_GREEN;
+        }
+
+        byte ledPosition = stringToInt(inString.substring(2));
+
+        if (ledPosition < 8)
+        {
+          module.setLED(ledColor, ledPosition);
+        }
+        else
+        {
+          Serial.println("led position must be 0~7");
+        }
+      }
+      else if (firstChar == 'b')
+      {
+        byte buttons = module.getButtons();
+        Serial.println(buttons, DEC);
+      }
+
+      // clear the string for new input:
+      inString = "";
+    }
+  }
+}
+
+int stringToInt(String parseString)
+{
+  parseString.trim();
+  return parseString.toInt();
 }

@@ -37,8 +37,6 @@ void setup()
 void loop()
 {
   serialCommandHandler();
-  // button press detectino likes the delay...
-  delay(500);
 }
 
 void serialCommandHandler()
@@ -60,27 +58,36 @@ void serialCommandHandler()
       // Handle LED Command
       if (firstChar == 'l')
       {
-        byte ledColor = TM1638_COLOR_NONE;
         char secondChar = inString.charAt(1);
 
-        if (secondChar == 'r')
+        if (secondChar == 'a')
         {
-          ledColor = TM1638_COLOR_RED;
-        }
-        else if (secondChar == 'g')
-        {
-          ledColor = TM1638_COLOR_GREEN;
-        }
-
-        byte ledPosition = stringToInt(inString.substring(2));
-
-        if (ledPosition < 8)
-        {
-          module.setLED(ledColor, ledPosition);
+          word ledWord = stringToInt(inString.substring(2));
+          module.setLEDs(ledWord);
         }
         else
         {
-          Serial.println("led position must be 0~7");
+          byte ledColor = TM1638_COLOR_NONE;
+
+          if (secondChar == 'r')
+          {
+            ledColor = TM1638_COLOR_RED;
+          }
+          else if (secondChar == 'g')
+          {
+            ledColor = TM1638_COLOR_GREEN;
+          }
+
+          byte ledPosition = stringToInt(inString.substring(2));
+
+          if (ledPosition < 8)
+          {
+            module.setLED(ledColor, ledPosition);
+          }
+          else
+          {
+            Serial.println("led position must be 0~7");
+          }
         }
       }
       else if (firstChar == 'b')

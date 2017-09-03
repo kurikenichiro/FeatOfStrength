@@ -1,12 +1,5 @@
 from serial import Serial
-
-
-def is_number(s):
-    try:
-        int(s)
-        return True
-    except ValueError:
-        return False
+from stringhelper import is_number
 
 
 class LKM1638(object):

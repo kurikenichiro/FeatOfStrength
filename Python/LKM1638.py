@@ -23,6 +23,13 @@ class LKM1638(object):
         print "Serial Write: ", command_string
         self.ser.write(command_string)
 
+    def set_leds(self, ledWord):
+        command_string = 'la '
+        command_string += str(ledWord)
+        command_string += '\n'
+        print "Serial Write: ", command_string
+        self.ser.write(command_string)
+
     def get_buttons(self):
         self.ser.write('b\n')
         read_string = self.ser.readline()

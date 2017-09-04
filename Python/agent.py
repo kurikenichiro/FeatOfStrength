@@ -51,6 +51,10 @@ while True:
         else:
             module.set_time(dt, time_format)
 
+        # extra credit green led lights express seconds in binary
+        if buttons & 0x04:
+            module.set_leds(((dt.second & 0xFF) << 8))
+
     # Socket Loop
     readable, writable, errored = select.select(read_list, [], [], 0.1)
 

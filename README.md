@@ -11,14 +11,16 @@ DIO -> 8 (yellow)
 CLK -> 9 (green)
 STB0 -> 7 (orange)
 
-* Add readline to line ending in serial monitor to test.
+1. Load FeatOfStrength.ino into Teensy using Arduino IDE
+2. Run agent.py (server) in terminal
+3. In another terminal use client.py to send agent commands (see --help)
 
 # Dependancies
 
 * https://github.com/rjbatista/tm1638-library
 * PySerial
 
-# Building
+# Command Line Building
 
 $ /Applications/Arduino.app/Contents/MacOS/Arduino --verify -v ~/Documents/Arduino/FeatOfStrength/FeatOfStrength.ino;
 

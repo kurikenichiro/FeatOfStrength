@@ -2,8 +2,25 @@
 
 * Install Arduino IDE https://www.arduino.cc/en/Main/Software
 * Install Teensyduino
+* Clone tm1638-library into Arduino library location
 
-# Building
+Connect the following
+VCC -> 5V (red)
+GND -> GND (black)
+DIO -> 8 (yellow)
+CLK -> 9 (green)
+STB0 -> 7 (orange)
+
+1. Load FeatOfStrength.ino into Teensy using Arduino IDE
+2. Run agent.py (server) in terminal
+3. In another terminal use client.py to send agent commands (see --help)
+
+# Dependancies
+
+* https://github.com/rjbatista/tm1638-library
+* PySerial
+
+# Command Line Building
 
 $ /Applications/Arduino.app/Contents/MacOS/Arduino --verify -v ~/Documents/Arduino/FeatOfStrength/FeatOfStrength.ino;
 
